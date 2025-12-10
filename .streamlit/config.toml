@@ -1,0 +1,27 @@
+[server]
+port = 8501
+headless = true
+enableXsrfProtection = false
+maxUploadSize = 50
+
+[browser]
+gatherUsageStats = false
+serverAddress = "localhost"
+
+[theme]
+primaryColor = "#7C3AED"
+backgroundColor = "#0F0F1A"
+secondaryBackgroundColor = "#1A1A2E"
+textColor = "#FFFFFF"
+font = "sans serif"
+
+[logger]
+level = "info"
+messageFormat = "%(asctime)s - %(levelname)s - %(message)s"
+
+[runner]
+magicEnabled = true
+
+[client]
+showErrorDetails = true
+toolbarMode = "developer"
