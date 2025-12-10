@@ -25,6 +25,19 @@ from ui.pages import (
     error,
     not_found
 )
+# Enhanced modules v4.1
+from ui.pages import workpaper, audit_planning, sampling, report_builder
+# WOW modules v4.2
+from ui.pages import (
+    gamification,
+    risk_universe,
+    root_cause,
+    issue_tracker,
+    command_center,
+    ai_lab,
+    timeline,
+    team_hub
+)
 
 
 class Router:
@@ -36,17 +49,35 @@ class Router:
     def __init__(self):
         """Initialize router with page mappings."""
         self.routes: Dict[str, Callable] = {
+            # Main
             "📊 Dashboard": dashboard.render,
+            "🎛️ Command Center": command_center.render,
             "📁 Documents": documents.render,
             "🎭 PTCF Builder": ptcf_builder.render,
+            # Audit Tools
             "⚖️ Risk Assessment": risk_assessment.render,
+            "🌐 Risk Universe": risk_universe.render,
             "📋 Findings Tracker": findings.render,
+            "📌 Issue Tracker": issue_tracker.render,
+            "📝 Workpapers": workpaper.render,
+            "📅 Audit Planning": audit_planning.render,
+            "📆 Audit Timeline": timeline.render,
+            "🔬 Root Cause Analyzer": root_cause.render,
+            "🧮 Sampling Calculator": sampling.render,
+            # Monitoring
             "🔄 Continuous Audit": continuous_audit.render,
             "📈 KRI Dashboard": kri_dashboard.render,
             "🔍 Fraud Detection": fraud_detection.render,
-            "📚 Regulations": regulatory_compliance.render,
+            # Intelligence
             "🤖 AI Chat": chat.render,
+            "🧪 AI Lab": ai_lab.render,
             "📊 Analytics": analytics.render,
+            "📑 Report Builder": report_builder.render,
+            # Collaboration
+            "👥 Team Hub": team_hub.render,
+            "🎮 Gamification": gamification.render,
+            # Reference
+            "📚 Regulations": regulatory_compliance.render,
             "⚙️ Settings": settings.render,
             "❓ Help": help.render,
             "ℹ️ About": about.render,
@@ -55,19 +86,35 @@ class Router:
         self.page_categories = {
             "Main": [
                 "📊 Dashboard",
+                "🎛️ Command Center",
                 "📁 Documents",
                 "🎭 PTCF Builder",
             ],
-            "Audit": [
+            "Audit Tools": [
                 "⚖️ Risk Assessment",
+                "🌐 Risk Universe",
                 "📋 Findings Tracker",
-                "🔄 Continuous Audit",
+                "📌 Issue Tracker",
+                "📝 Workpapers",
+                "📅 Audit Planning",
+                "📆 Audit Timeline",
+                "🔬 Root Cause Analyzer",
+                "🧮 Sampling Calculator",
             ],
-            "Intelligence": [
+            "Monitoring": [
+                "🔄 Continuous Audit",
                 "📈 KRI Dashboard",
                 "🔍 Fraud Detection",
+            ],
+            "Intelligence": [
                 "🤖 AI Chat",
+                "🧪 AI Lab",
                 "📊 Analytics",
+                "📑 Report Builder",
+            ],
+            "Collaboration": [
+                "👥 Team Hub",
+                "🎮 Gamification",
             ],
             "Reference": [
                 "📚 Regulations",

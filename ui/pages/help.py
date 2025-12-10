@@ -255,8 +255,8 @@ class HelpPage:
                 <div style="color:{t['text_secondary']} !important;margin-bottom:1rem;">
                     For technical issues and feature requests
                 </div>
-                <a href="mailto:support@aurix.id" style="color:{t['primary']} !important;">
-                    support@aurix.id
+                <a href="mailto:sopian.hadianto@gmail.com" style="color:{t['primary']} !important;">
+                    sopian.hadianto@gmail.com
                 </a>
             </div>
             ''', unsafe_allow_html=True)

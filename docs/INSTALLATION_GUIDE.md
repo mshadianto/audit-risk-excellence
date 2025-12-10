@@ -280,7 +280,7 @@ Akses dari device lain: `http://[IP_KOMPUTER]:8501`
 
 - **GitHub Issues:** github.com/mshadianto/aurix/issues
 - **Documentation:** docs.aurix.id
-- **Email:** support@aurix.id
+- **Email:** sopian.hadianto@gmail.com
 
 ---
 

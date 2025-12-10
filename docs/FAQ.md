@@ -202,7 +202,7 @@ pip install -r requirements.txt --force-reinstall
 **A:** 
 - GitHub: github.com/mshadianto
 - LinkedIn: linkedin.com/in/mshadianto
-- Email: support@aurix.id
+- Email: sopian.hadianto@gmail.com
 
 ### Q: Bagaimana cara kontribusi?
 **A:** 

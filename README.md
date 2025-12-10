@@ -264,7 +264,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 📧 Email: support@aurix.id
+- 📧 Email: sopian.hadianto@gmail.com
 - 💬 GitHub Issues: [Create Issue](https://github.com/mshadianto/aurix/issues)
 - 📖 Documentation: [docs.aurix.id](https://docs.aurix.id)
 

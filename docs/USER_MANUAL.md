@@ -575,7 +575,7 @@ pip install -r requirements.txt --force-reinstall
 ### 15.3 Kontak Support
 
 - **GitHub**: https://github.com/mshadianto
-- **Email**: support@aurix.id
+- **Email**: sopian.hadianto@gmail.com
 - **Documentation**: https://docs.aurix.id
 
 ---

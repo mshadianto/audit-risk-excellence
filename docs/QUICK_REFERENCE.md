@@ -147,7 +147,7 @@ E   1 [  1] [ 2] [ 3] [ 4] [ 5]  ← LOW
 
 - **GitHub**: github.com/mshadianto
 - **Docs**: docs.aurix.id
-- **Email**: support@aurix.id
+- **Email**: sopian.hadianto@gmail.com
 
 ---
 

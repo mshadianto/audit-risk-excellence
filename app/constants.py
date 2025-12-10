@@ -10,11 +10,24 @@ from typing import Dict, List, Any
 # Application Info
 # ============================================
 APP_NAME = "AURIX"
-APP_VERSION = "4.0.0"
+APP_VERSION = "4.2.0"
 APP_TAGLINE = "Intelligent Audit. Elevated Assurance."
-APP_DESCRIPTION = "Platform AI komprehensif untuk Internal Audit di industri keuangan Indonesia. Menggabungkan metodologi McKinsey dan Big 4 dengan kecerdasan buatan modern."
+APP_DESCRIPTION = """Platform AI komprehensif untuk Internal Audit di industri keuangan Indonesia. 
+Menggabungkan metodologi McKinsey dan Big 4 dengan kecerdasan buatan modern. 
+Dilengkapi 26+ modul audit profesional termasuk:
+🎮 Gamification & Team Achievements
+🎛️ Real-time Command Center
+🌐 Interactive Risk Universe
+🔬 Root Cause Analyzer (Fishbone & 5 Whys)
+📌 Kanban Issue Tracker
+🧪 AI Lab & Prompt Playground
+📆 Visual Audit Timeline
+👥 Team Hub & Collaboration"""
 APP_AUTHOR = "MS Hadianto"
 APP_YEAR = "2025"
+
+# Module count for reference
+TOTAL_MODULES = 26
 
 
 # ============================================

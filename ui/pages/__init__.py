@@ -19,7 +19,21 @@ from ui.pages import (
     help,
     about,
     error,
-    not_found
+    not_found,
+    # Enhanced modules v4.1
+    workpaper,
+    audit_planning,
+    sampling,
+    report_builder,
+    # WOW modules v4.2
+    gamification,
+    risk_universe,
+    root_cause,
+    issue_tracker,
+    command_center,
+    ai_lab,
+    timeline,
+    team_hub
 )
 
 __all__ = [
@@ -38,5 +52,19 @@ __all__ = [
     'help',
     'about',
     'error',
-    'not_found'
+    'not_found',
+    # Enhanced modules v4.1
+    'workpaper',
+    'audit_planning',
+    'sampling',
+    'report_builder',
+    # WOW modules v4.2
+    'gamification',
+    'risk_universe',
+    'root_cause',
+    'issue_tracker',
+    'command_center',
+    'ai_lab',
+    'timeline',
+    'team_hub'
 ]
