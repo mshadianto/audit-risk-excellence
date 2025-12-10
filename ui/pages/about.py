@@ -194,7 +194,7 @@ class AboutPage:
         <div class="pro-card" style="padding:1.5rem;background:{t['bg_secondary']};">
             <div style="font-weight:600;color:{t['text']} !important;margin-bottom:0.5rem;">MIT License</div>
             <div style="font-size:0.85rem;color:{t['text_secondary']} !important;">
-                Copyright © 2024 AURIX Project
+                Copyright © 2025 AURIX Project
                 <br><br>
                 Permission is hereby granted, free of charge, to any person obtaining a copy
                 of this software and associated documentation files (the "Software"), to deal
