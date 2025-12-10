@@ -274,6 +274,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Built with ❤️ for Indonesian Internal Auditors**
 
-Copyright © 2024 AURIX Project
+Copyright © 2025 AURIX Project
 
 </div>
