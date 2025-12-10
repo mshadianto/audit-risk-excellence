@@ -123,7 +123,7 @@ class AboutPage:
         st.markdown("### 📜 Version History")
         
         versions = [
-            ("4.0.0", "December 2024", "Major Release", [
+            ("4.0.0", "December 2025", "Major Release", [
                 "Complete architecture redesign",
                 "New modular page structure",
                 "Enhanced PTCF Builder",
@@ -131,19 +131,19 @@ class AboutPage:
                 "KRI Dashboard",
                 "Continuous Audit monitoring"
             ]),
-            ("3.0.0", "November 2024", "Feature Release", [
+            ("3.0.0", "November 2025", "Feature Release", [
                 "PostgreSQL integration",
                 "Real-time visitor analytics",
                 "Improved UI/UX",
                 "Multi-provider LLM support"
             ]),
-            ("2.0.0", "October 2024", "Feature Release", [
+            ("2.0.0", "November 2025", "Feature Release", [
                 "RAG implementation",
                 "Document management",
                 "Risk assessment module",
                 "Findings tracker"
             ]),
-            ("1.0.0", "September 2024", "Initial Release", [
+            ("1.0.0", "November 2025", "Initial Release", [
                 "Core platform launch",
                 "Basic AI chat",
                 "Simple document upload",
