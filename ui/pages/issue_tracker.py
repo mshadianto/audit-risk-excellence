@@ -1,11 +1,10 @@
 """
 Issue Tracker Module for AURIX.
-Kanban-style issue tracking for audit findings and remediation.
+Kanban-style issue tracking for audit findings.
 """
 
 import streamlit as st
-from datetime import datetime, date, timedelta
-import uuid
+from datetime import datetime, timedelta
 import random
 
 from ui.styles.css_builder import get_current_theme
@@ -23,7 +22,7 @@ def render():
     
     # Initialize issues
     if 'issues' not in st.session_state:
-        st.session_state.issues = _generate_sample_issues()
+        st.session_state.issues = _get_sample_issues()
     
     # Tabs
     tab1, tab2, tab3, tab4 = st.tabs([
@@ -40,7 +39,7 @@ def render():
         _render_list_view(t)
     
     with tab3:
-        _render_new_issue(t)
+        _render_new_issue_form(t)
     
     with tab4:
         _render_analytics(t)
@@ -48,19 +47,19 @@ def render():
     render_footer()
 
 
-def _generate_sample_issues():
-    """Generate sample issues."""
+def _get_sample_issues():
+    """Get sample issues data."""
     return [
-        {"id": "ISS-001", "title": "Segregation of Duties Violation", "status": "Open", "priority": "Critical", "assignee": "Ahmad R.", "due": "2025-01-15", "category": "Controls", "progress": 0},
-        {"id": "ISS-002", "title": "Incomplete KYC Documentation", "status": "In Progress", "priority": "High", "assignee": "Budi S.", "due": "2025-01-20", "category": "Compliance", "progress": 40},
-        {"id": "ISS-003", "title": "System Access Rights Review", "status": "In Progress", "priority": "Medium", "assignee": "Citra D.", "due": "2025-01-25", "category": "IT", "progress": 65},
-        {"id": "ISS-004", "title": "Credit Limit Breach - 3 Cases", "status": "Open", "priority": "High", "assignee": "Dewi P.", "due": "2025-01-18", "category": "Credit", "progress": 0},
-        {"id": "ISS-005", "title": "Vendor Master Data Cleanup", "status": "Review", "priority": "Medium", "assignee": "Ahmad R.", "due": "2025-01-10", "category": "Operations", "progress": 90},
-        {"id": "ISS-006", "title": "AML Alert Backlog", "status": "In Progress", "priority": "Critical", "assignee": "Budi S.", "due": "2025-01-12", "category": "AML", "progress": 55},
-        {"id": "ISS-007", "title": "Patch Management Gaps", "status": "Review", "priority": "High", "assignee": "Citra D.", "due": "2025-01-08", "category": "IT", "progress": 95},
-        {"id": "ISS-008", "title": "Reconciliation Delays", "status": "Closed", "priority": "Medium", "assignee": "Dewi P.", "due": "2025-01-05", "category": "Operations", "progress": 100},
-        {"id": "ISS-009", "title": "Policy Documentation Update", "status": "Closed", "priority": "Low", "assignee": "Ahmad R.", "due": "2025-01-03", "category": "Compliance", "progress": 100},
-        {"id": "ISS-010", "title": "BCP Testing Overdue", "status": "Open", "priority": "High", "assignee": "Citra D.", "due": "2025-01-30", "category": "IT", "progress": 0},
+        {"id": "ISS-001", "title": "Segregation of Duties Gap", "status": "Open", "priority": "High", "assignee": "Ahmad R.", "due": "2025-02-15", "progress": 0},
+        {"id": "ISS-002", "title": "Missing Approval Documentation", "status": "Open", "priority": "Medium", "assignee": "Budi S.", "due": "2025-02-20", "progress": 0},
+        {"id": "ISS-003", "title": "System Access Review Overdue", "status": "Open", "priority": "Critical", "assignee": "Citra D.", "due": "2025-02-10", "progress": 0},
+        {"id": "ISS-004", "title": "KYC Document Incomplete", "status": "In Progress", "priority": "High", "assignee": "Dewi P.", "due": "2025-02-25", "progress": 40},
+        {"id": "ISS-005", "title": "Reconciliation Discrepancy", "status": "In Progress", "priority": "Medium", "assignee": "Ahmad R.", "due": "2025-03-01", "progress": 60},
+        {"id": "ISS-006", "title": "Vendor Contract Expired", "status": "In Progress", "priority": "Low", "assignee": "Budi S.", "due": "2025-03-05", "progress": 80},
+        {"id": "ISS-007", "title": "Backup Procedure Update", "status": "Review", "priority": "Medium", "assignee": "Citra D.", "due": "2025-02-28", "progress": 90},
+        {"id": "ISS-008", "title": "Policy Document Revision", "status": "Review", "priority": "Low", "assignee": "Dewi P.", "due": "2025-03-10", "progress": 95},
+        {"id": "ISS-009", "title": "Training Record Gap", "status": "Closed", "priority": "Medium", "assignee": "Ahmad R.", "due": "2025-01-30", "progress": 100},
+        {"id": "ISS-010", "title": "Password Policy Violation", "status": "Closed", "priority": "High", "assignee": "Budi S.", "due": "2025-01-25", "progress": 100},
     ]
 
 
@@ -69,72 +68,76 @@ def _render_kanban_board(t: dict):
     st.markdown("### 📋 Issue Kanban Board")
     
     issues = st.session_state.issues
-    
-    # Status columns
     statuses = ["Open", "In Progress", "Review", "Closed"]
-    status_icons = ["📥", "🔄", "👁️", "✅"]
-    status_colors = [t['danger'], t['primary'], t['warning'], t['success']]
+    status_icons = {"Open": "📥", "In Progress": "🔄", "Review": "👁️", "Closed": "✅"}
+    status_colors = {"Open": t['danger'], "In Progress": t['warning'], "Review": t['accent'], "Closed": t['success']}
     
-    # Summary stats
+    # Count summary
     cols = st.columns(4)
-    for col, status, icon, color in zip(cols, statuses, status_icons, status_colors):
-        count = len([i for i in issues if i['status'] == status])
-        with col:
-            st.markdown(f'''
-            <div style="background:{color}15;border:2px solid {color};border-radius:12px;padding:1rem;text-align:center;">
-                <div style="font-size:1.5rem;">{icon}</div>
-                <div style="font-size:1.75rem;font-weight:700;color:{color};">{count}</div>
-                <div style="font-size:0.8rem;color:{t['text_muted']};">{status}</div>
+    for i, status in enumerate(statuses):
+        count = len([iss for iss in issues if iss['status'] == status])
+        color = status_colors[status]
+        with cols[i]:
+            st.markdown(f"""
+            <div style="background:{t['card']};border:2px solid {color};border-radius:12px;padding:1rem;text-align:center;">
+                <div style="font-size:1.5rem;">{status_icons[status]}</div>
+                <div style="font-size:2rem;font-weight:700;color:{color};">{count}</div>
+                <div style="font-size:0.85rem;color:{t['text']};">{status}</div>
             </div>
-            ''', unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     
     # Kanban columns
     cols = st.columns(4)
     
-    priority_colors = {"Critical": t['danger'], "High": t['warning'], "Medium": t['accent'], "Low": t['success']}
-    
-    for col, status, icon, status_color in zip(cols, statuses, status_icons, status_colors):
-        with col:
-            st.markdown(f'''
-            <div style="background:{status_color}10;border-top:4px solid {status_color};border-radius:12px;padding:1rem;min-height:400px;">
-                <div style="font-weight:700;color:{t['text']};margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;">
-                    <span>{icon}</span>
-                    <span>{status}</span>
-                    <span style="background:{status_color};color:white;padding:0.1rem 0.5rem;border-radius:10px;font-size:0.7rem;margin-left:auto;">
-                        {len([i for i in issues if i['status'] == status])}
-                    </span>
-                </div>
+    for i, status in enumerate(statuses):
+        with cols[i]:
+            color = status_colors[status]
+            st.markdown(f"""
+            <div style="background:{color}20;border-top:3px solid {color};border-radius:0 0 8px 8px;padding:0.5rem;margin-bottom:0.75rem;">
+                <span style="font-weight:600;color:{color};">{status_icons[status]} {status}</span>
             </div>
-            ''', unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
             
-            # Issue cards
-            for issue in [i for i in issues if i['status'] == status]:
-                priority_color = priority_colors.get(issue['priority'], t['text_muted'])
-                
-                st.markdown(f'''
-                <div style="background:{t['card']};border:1px solid {t['border']};border-left:4px solid {priority_color};border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;cursor:pointer;transition:all 0.2s;" 
-                     
-                    >
-                    <div style="font-size:0.65rem;color:{t['text_muted']};margin-bottom:0.25rem;">{issue['id']}</div>
-                    <div style="font-weight:600;color:{t['text']};font-size:0.8rem;margin-bottom:0.5rem;">{issue['title'][:25]}{'...' if len(issue['title']) > 25 else ''}</div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <span style="background:{priority_color}20;color:{priority_color};padding:0.1rem 0.4rem;border-radius:6px;font-size:0.6rem;font-weight:600;">{issue['priority']}</span>
-                        <span style="font-size:0.65rem;color:{t['text_muted']};">👤 {issue['assignee'].split()[0]}</span>
-                    </div>
-                    <div style="height:4px;background:{t['border']};border-radius:2px;margin-top:0.5rem;overflow:hidden;">
-                        <div style="width:{issue['progress']}%;height:100%;background:{priority_color};"></div>
-                    </div>
+            status_issues = [iss for iss in issues if iss['status'] == status]
+            
+            for iss in status_issues:
+                _render_issue_card(t, iss)
+            
+            if not status_issues:
+                st.markdown(f"""
+                <div style="background:{t['bg_secondary']};border:1px dashed {t['border']};border-radius:8px;padding:1rem;text-align:center;color:{t['text_muted']};font-size:0.85rem;">
+                    No issues
                 </div>
-                ''', unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
+
+
+def _render_issue_card(t: dict, issue: dict):
+    """Render a single issue card."""
+    priority_colors = {
+        "Critical": t['danger'],
+        "High": "#f97316",
+        "Medium": t['warning'],
+        "Low": t['success']
+    }
+    color = priority_colors.get(issue['priority'], t['text_muted'])
     
-    # Drag hint
-    st.markdown(f'''
-    <div style="text-align:center;margin-top:1rem;font-size:0.75rem;color:{t['text_muted']};">
-        💡 Click on any issue to view details and update status
+    st.markdown(f"""
+    <div style="background:{t['card']};border:1px solid {t['border']};border-left:3px solid {color};border-radius:0 8px 8px 0;padding:0.75rem;margin-bottom:0.5rem;">
+        <div style="font-size:0.65rem;color:{t['text_muted']};margin-bottom:0.25rem;">{issue['id']}</div>
+        <div style="font-size:0.85rem;font-weight:600;color:{t['text']};margin-bottom:0.5rem;">{issue['title']}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.7rem;">
+            <span style="background:{color}20;color:{color};padding:0.1rem 0.4rem;border-radius:4px;">{issue['priority']}</span>
+            <span style="color:{t['text_muted']};">👤 {issue['assignee'].split()[0]}</span>
+        </div>
+        <div style="margin-top:0.5rem;">
+            <div style="height:4px;background:{t['bg_secondary']};border-radius:2px;overflow:hidden;">
+                <div style="height:100%;width:{issue['progress']}%;background:{color};"></div>
+            </div>
+        </div>
     </div>
-    ''', unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 
 def _render_list_view(t: dict):
@@ -144,132 +147,84 @@ def _render_list_view(t: dict):
     issues = st.session_state.issues
     
     # Filters
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
     with col1:
-        filter_status = st.selectbox("Status", ["All", "Open", "In Progress", "Review", "Closed"])
+        status_filter = st.multiselect("Status", ["Open", "In Progress", "Review", "Closed"], default=["Open", "In Progress", "Review"])
     with col2:
-        filter_priority = st.selectbox("Priority", ["All", "Critical", "High", "Medium", "Low"])
+        priority_filter = st.multiselect("Priority", ["Critical", "High", "Medium", "Low"], default=["Critical", "High", "Medium", "Low"])
     with col3:
-        filter_assignee = st.selectbox("Assignee", ["All"] + list(set(i['assignee'] for i in issues)))
-    with col4:
         search = st.text_input("🔍 Search", placeholder="Search issues...")
     
     # Filter issues
-    filtered = issues
-    if filter_status != "All":
-        filtered = [i for i in filtered if i['status'] == filter_status]
-    if filter_priority != "All":
-        filtered = [i for i in filtered if i['priority'] == filter_priority]
-    if filter_assignee != "All":
-        filtered = [i for i in filtered if i['assignee'] == filter_assignee]
-    if search:
-        filtered = [i for i in filtered if search.lower() in i['title'].lower() or search.lower() in i['id'].lower()]
+    filtered = [iss for iss in issues 
+                if iss['status'] in status_filter 
+                and iss['priority'] in priority_filter
+                and (search.lower() in iss['title'].lower() if search else True)]
     
-    priority_colors = {"Critical": t['danger'], "High": t['warning'], "Medium": t['accent'], "Low": t['success']}
-    status_colors = {"Open": t['danger'], "In Progress": t['primary'], "Review": t['warning'], "Closed": t['success']}
+    st.markdown(f"**Showing {len(filtered)} issues**")
     
-    # Table header
-    st.markdown(f'''
-    <div style="display:grid;grid-template-columns:80px 1fr 100px 100px 120px 100px 80px;gap:0.5rem;padding:0.75rem;background:{t['bg_secondary']};border-radius:8px 8px 0 0;font-weight:600;font-size:0.8rem;color:{t['text']};">
-        <div>ID</div>
-        <div>Title</div>
-        <div>Status</div>
-        <div>Priority</div>
-        <div>Assignee</div>
-        <div>Due Date</div>
-        <div>Progress</div>
-    </div>
-    ''', unsafe_allow_html=True)
-    
-    # Table rows
-    for issue in filtered:
-        priority_color = priority_colors.get(issue['priority'], t['text_muted'])
-        status_color = status_colors.get(issue['status'], t['text_muted'])
+    # List
+    for iss in filtered:
+        priority_colors = {"Critical": t['danger'], "High": "#f97316", "Medium": t['warning'], "Low": t['success']}
+        status_colors = {"Open": t['danger'], "In Progress": t['warning'], "Review": t['accent'], "Closed": t['success']}
         
-        # Check if overdue
-        is_overdue = issue['due'] < datetime.now().strftime('%Y-%m-%d') and issue['status'] != 'Closed'
+        p_color = priority_colors.get(iss['priority'], t['text_muted'])
+        s_color = status_colors.get(iss['status'], t['text_muted'])
         
-        st.markdown(f'''
-        <div style="display:grid;grid-template-columns:80px 1fr 100px 100px 120px 100px 80px;gap:0.5rem;padding:0.75rem;background:{t['card']};border:1px solid {t['border']};border-top:none;font-size:0.85rem;align-items:center;">
-            <div style="color:{t['primary']};font-weight:600;">{issue['id']}</div>
-            <div style="color:{t['text']};">{issue['title']}</div>
-            <div><span style="background:{status_color}20;color:{status_color};padding:0.2rem 0.5rem;border-radius:12px;font-size:0.7rem;font-weight:600;">{issue['status']}</span></div>
-            <div><span style="background:{priority_color}20;color:{priority_color};padding:0.2rem 0.5rem;border-radius:12px;font-size:0.7rem;font-weight:600;">{issue['priority']}</span></div>
-            <div style="color:{t['text_muted']};">👤 {issue['assignee']}</div>
-            <div style="color:{'#dc2626' if is_overdue else t['text_muted']};">{'⚠️ ' if is_overdue else ''}{issue['due']}</div>
-            <div>
-                <div style="height:6px;background:{t['border']};border-radius:3px;overflow:hidden;">
-                    <div style="width:{issue['progress']}%;height:100%;background:{status_color};"></div>
+        st.markdown(f"""
+        <div style="background:{t['card']};border:1px solid {t['border']};border-radius:8px;padding:1rem;margin-bottom:0.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div style="flex:1;">
+                    <span style="font-size:0.75rem;color:{t['text_muted']};margin-right:0.5rem;">{iss['id']}</span>
+                    <span style="font-weight:600;color:{t['text']};">{iss['title']}</span>
                 </div>
-                <div style="font-size:0.65rem;color:{t['text_muted']};text-align:center;">{issue['progress']}%</div>
+                <div style="display:flex;gap:0.5rem;align-items:center;">
+                    <span style="background:{s_color}20;color:{s_color};padding:0.2rem 0.5rem;border-radius:4px;font-size:0.7rem;">{iss['status']}</span>
+                    <span style="background:{p_color}20;color:{p_color};padding:0.2rem 0.5rem;border-radius:4px;font-size:0.7rem;">{iss['priority']}</span>
+                    <span style="font-size:0.75rem;color:{t['text_muted']};">👤 {iss['assignee']}</span>
+                    <span style="font-size:0.75rem;color:{t['text_muted']};">📅 {iss['due']}</span>
+                </div>
             </div>
         </div>
-        ''', unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
 
-def _render_new_issue(t: dict):
+def _render_new_issue_form(t: dict):
     """Render new issue form."""
     st.markdown("### ➕ Create New Issue")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        issue_title = st.text_input("Issue Title", placeholder="Brief description of the issue")
-        
-        category = st.selectbox("Category", ["Controls", "Compliance", "IT", "Credit", "Operations", "AML", "Treasury", "HR"])
-        
+        title = st.text_input("Issue Title *", placeholder="Brief description of the issue")
+        category = st.selectbox("Category", ["Control Deficiency", "Compliance Gap", "Process Issue", "Documentation Gap", "System Issue"])
         priority = st.selectbox("Priority", ["Critical", "High", "Medium", "Low"])
-        
-        assignee = st.selectbox("Assignee", ["Ahmad R.", "Budi S.", "Citra D.", "Dewi P.", "Unassigned"])
+        assignee = st.selectbox("Assignee", ["Ahmad R.", "Budi S.", "Citra D.", "Dewi P."])
     
     with col2:
-        due_date = st.date_input("Due Date", value=date.today() + timedelta(days=30))
-        
-        related_finding = st.text_input("Related Finding ID", placeholder="e.g., FND-2024-001")
-        
-        source = st.selectbox("Source", ["Internal Audit", "External Audit", "Regulatory", "Self-Identified", "Management"])
-        
-        auditee = st.text_input("Auditee / Process Owner", placeholder="Name of responsible person")
+        due_date = st.date_input("Due Date", value=datetime.now() + timedelta(days=30))
+        related_finding = st.text_input("Related Finding ID", placeholder="e.g., FND-2025-001")
+        source = st.selectbox("Source", ["Internal Audit", "External Audit", "Regulator", "Self-Identified", "Whistleblower"])
+        auditee = st.text_input("Auditee/Department", placeholder="e.g., Operations Division")
     
-    description = st.text_area(
-        "Issue Description",
-        height=150,
-        placeholder="Detailed description of the issue, including:\n- What was found\n- Where it occurred\n- Impact assessment\n- Root cause (if known)"
-    )
+    description = st.text_area("Description", placeholder="Detailed description of the issue...", height=100)
+    action = st.text_area("Recommended Action", placeholder="Suggested corrective action...", height=80)
     
-    recommended_action = st.text_area(
-        "Recommended Action",
-        height=100,
-        placeholder="What actions should be taken to resolve this issue?"
-    )
+    st.markdown("<br>", unsafe_allow_html=True)
     
-    # Action buttons
-    col_btn1, col_btn2, col_btn3 = st.columns(3)
-    
-    with col_btn1:
+    col1, col2, col3 = st.columns(3)
+    with col1:
         if st.button("💾 Save as Draft", use_container_width=True):
             st.info("Draft saved!")
-    
-    with col_btn2:
-        if st.button("📤 Create Issue", type="primary", use_container_width=True):
-            if issue_title:
-                new_issue = {
-                    "id": f"ISS-{len(st.session_state.issues)+1:03d}",
-                    "title": issue_title,
-                    "status": "Open",
-                    "priority": priority,
-                    "assignee": assignee,
-                    "due": str(due_date),
-                    "category": category,
-                    "progress": 0
-                }
-                st.session_state.issues.append(new_issue)
-                st.success(f"✅ Issue {new_issue['id']} created successfully!")
+    with col2:
+        if st.button("✅ Create Issue", use_container_width=True, type="primary"):
+            if title:
+                new_id = f"ISS-{len(st.session_state.issues)+1:03d}"
+                st.success(f"Issue {new_id} created successfully!")
             else:
-                st.error("Please enter an issue title.")
-    
-    with col_btn3:
-        if st.button("🔄 Clear Form", use_container_width=True):
+                st.error("Please enter issue title")
+    with col3:
+        if st.button("🗑️ Clear Form", use_container_width=True):
             st.rerun()
 
 
@@ -281,98 +236,91 @@ def _render_analytics(t: dict):
     
     # Summary metrics
     total = len(issues)
-    open_issues = len([i for i in issues if i['status'] == 'Open'])
+    open_count = len([i for i in issues if i['status'] == 'Open'])
     in_progress = len([i for i in issues if i['status'] == 'In Progress'])
-    overdue = len([i for i in issues if i['due'] < datetime.now().strftime('%Y-%m-%d') and i['status'] != 'Closed'])
-    critical = len([i for i in issues if i['priority'] == 'Critical' and i['status'] != 'Closed'])
+    critical_open = len([i for i in issues if i['status'] in ['Open', 'In Progress'] and i['priority'] == 'Critical'])
     
     cols = st.columns(5)
-    
     metrics = [
-        ("Total Issues", total, t['text'], "📋"),
-        ("Open", open_issues, t['danger'], "📥"),
-        ("In Progress", in_progress, t['primary'], "🔄"),
-        ("Overdue", overdue, t['danger'], "⚠️"),
-        ("Critical Open", critical, t['danger'], "🔴"),
+        ("📋 Total Issues", total, t['primary']),
+        ("📥 Open", open_count, t['danger']),
+        ("🔄 In Progress", in_progress, t['warning']),
+        ("⏰ Overdue", 2, t['danger']),
+        ("🔴 Critical Open", critical_open, t['danger']),
     ]
     
-    for col, (label, value, color, icon) in zip(cols, metrics):
+    for col, (label, value, color) in zip(cols, metrics):
         with col:
-            st.markdown(f'''
+            st.markdown(f"""
             <div style="background:{t['card']};border:1px solid {t['border']};border-radius:12px;padding:1rem;text-align:center;">
-                <div style="font-size:1.5rem;margin-bottom:0.25rem;">{icon}</div>
                 <div style="font-size:1.75rem;font-weight:700;color:{color};">{value}</div>
                 <div style="font-size:0.75rem;color:{t['text_muted']};">{label}</div>
             </div>
-            ''', unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Charts simulation
+    # By Status
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("#### By Status")
-        
-        status_data = {"Open": 3, "In Progress": 3, "Review": 2, "Closed": 2}
-        status_colors_map = {"Open": t['danger'], "In Progress": t['primary'], "Review": t['warning'], "Closed": t['success']}
-        
-        for status, count in status_data.items():
+        for status in ["Open", "In Progress", "Review", "Closed"]:
+            count = len([i for i in issues if i['status'] == status])
             pct = count / total * 100
-            color = status_colors_map[status]
-            
-            st.markdown(f'''
-            <div style="margin-bottom:0.75rem;">
+            color = {"Open": t['danger'], "In Progress": t['warning'], "Review": t['accent'], "Closed": t['success']}[status]
+            st.markdown(f"""
+            <div style="margin-bottom:0.5rem;">
                 <div style="display:flex;justify-content:space-between;margin-bottom:0.25rem;">
-                    <span style="color:{t['text']};font-size:0.85rem;">{status}</span>
-                    <span style="color:{t['text_muted']};font-size:0.85rem;">{count} ({pct:.0f}%)</span>
+                    <span style="font-size:0.85rem;color:{t['text']};">{status}</span>
+                    <span style="font-size:0.85rem;color:{t['text_muted']};">{count} ({pct:.0f}%)</span>
                 </div>
-                <div style="height:20px;background:{t['border']};border-radius:10px;overflow:hidden;">
-                    <div style="width:{pct}%;height:100%;background:{color};border-radius:10px;"></div>
+                <div style="height:8px;background:{t['bg_secondary']};border-radius:4px;overflow:hidden;">
+                    <div style="height:100%;width:{pct}%;background:{color};"></div>
                 </div>
             </div>
-            ''', unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("#### By Priority")
-        
-        priority_data = {"Critical": 2, "High": 4, "Medium": 3, "Low": 1}
-        priority_colors_map = {"Critical": t['danger'], "High": t['warning'], "Medium": t['accent'], "Low": t['success']}
-        
-        for priority, count in priority_data.items():
+        for priority in ["Critical", "High", "Medium", "Low"]:
+            count = len([i for i in issues if i['priority'] == priority])
             pct = count / total * 100
-            color = priority_colors_map[priority]
-            
-            st.markdown(f'''
-            <div style="margin-bottom:0.75rem;">
+            color = {"Critical": t['danger'], "High": "#f97316", "Medium": t['warning'], "Low": t['success']}[priority]
+            st.markdown(f"""
+            <div style="margin-bottom:0.5rem;">
                 <div style="display:flex;justify-content:space-between;margin-bottom:0.25rem;">
-                    <span style="color:{t['text']};font-size:0.85rem;">{priority}</span>
-                    <span style="color:{t['text_muted']};font-size:0.85rem;">{count} ({pct:.0f}%)</span>
+                    <span style="font-size:0.85rem;color:{t['text']};">{priority}</span>
+                    <span style="font-size:0.85rem;color:{t['text_muted']};">{count} ({pct:.0f}%)</span>
                 </div>
-                <div style="height:20px;background:{t['border']};border-radius:10px;overflow:hidden;">
-                    <div style="width:{pct}%;height:100%;background:{color};border-radius:10px;"></div>
+                <div style="height:8px;background:{t['bg_secondary']};border-radius:4px;overflow:hidden;">
+                    <div style="height:100%;width:{pct}%;background:{color};"></div>
                 </div>
             </div>
-            ''', unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
     
     # Aging analysis
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("#### Issue Aging Analysis")
+    st.markdown("#### ⏱️ Aging Analysis (Open Issues)")
     
-    aging_brackets = [
+    aging = [
         ("0-7 days", 2, t['success']),
-        ("8-14 days", 3, t['accent']),
-        ("15-30 days", 2, t['warning']),
-        ("31-60 days", 2, t['danger']),
-        (">60 days", 1, "#7f1d1d"),
+        ("8-14 days", 1, t['accent']),
+        ("15-30 days", 1, t['warning']),
+        ("31-60 days", 0, "#f97316"),
+        (">60 days", 0, t['danger']),
     ]
     
     cols = st.columns(5)
-    for col, (bracket, count, color) in zip(cols, aging_brackets):
+    for col, (label, count, color) in zip(cols, aging):
         with col:
-            st.markdown(f'''
-            <div style="background:{color}20;border:1px solid {color};border-radius:12px;padding:1rem;text-align:center;">
-                <div style="font-size:1.5rem;font-weight:700;color:{color};">{count}</div>
-                <div style="font-size:0.7rem;color:{t['text_muted']};">{bracket}</div>
+            st.markdown(f"""
+            <div style="background:{color}20;border:1px solid {color};border-radius:8px;padding:0.75rem;text-align:center;">
+                <div style="font-size:1.25rem;font-weight:700;color:{color};">{count}</div>
+                <div style="font-size:0.7rem;color:{t['text_muted']};">{label}</div>
             </div>
-            ''', unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
+
+
+if __name__ == "__main__":
+    render()
